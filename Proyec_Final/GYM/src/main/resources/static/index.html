@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GymManager</title>
+
+    <!-- Fuentes + Bootstrap + Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Estilos CSS -->
+    <style>
+        /* Variables CSS */
+        :root {
+            --bg: #0b0e14;
+            --surface: #10141d;
+            --surface-2: #0f131b;
+            --line: #1c2331;
+            --brand: #f8c316;
+            --brand-2: #17a2ff;
+            --muted: #aab3c5;
+            --ok: #26d07c;
+            --warn: #ffb020;
+            --err: #ff5d5d;
+        }
+
+        /* Estilos generales */
+        * { box-sizing: border-box }
+        html, body { height: 100% }
+        body {
+            background: var(--bg);
+            color: #e5e9f0;
+            font-family: "Poppins", system-ui, Arial, sans-serif;
+            letter-spacing: .2px;
+        }
+
+        /* NAV */
+        .navbar {
+            background: linear-gradient(180deg, #0d1118 0, #0b0e14 100%);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: radial-gradient(110% 110% at 30% 20%, var(--brand) 0%, #6d5600 60%, #000 100%);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 0 2px rgba(248,195,22,.18), inset 0 0 30px rgba(0,0,0,.6);
+        }
+
+        .brand-logo i { color: #111; }
+
+        .brand-text {
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: .6px;
+        }
+
+        .brand-text .accent { color: var(--brand) }
+
+        /* Botones */
+        .btn-brand {
+            background: var(--brand);
+            color: #151515;
+            border: 0;
+            font-weight: 800;
+        }
+
+        .btn-brand:hover { filter: brightness(.95) }
+
+        .btn-ghost {
+            border: 1px solid var(--line);
+            color: #d7deea;
+            background: transparent;
+        }
+
+        .btn-ghost:hover { background: #121724 }
+
+        .btn-client {
+            background: linear-gradient(135deg, var(--brand-2), #2d8cff);
+            color: white;
+            border: 0;
+            font-weight: 600;
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, var(--ok), #2cd489);
+            color: white;
+            border: 0;
+            font-weight: 600;
+        }
+
+        .btn-client:hover, .btn-admin:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 72vh;
+            background: radial-gradient(1000px 400px at 20% -10%, rgba(23,162,255,.25) 0, transparent 60%),
+            radial-gradient(1000px 500px at 90% 10%, rgba(248,195,22,.20) 0, transparent 60%),
+            linear-gradient(180deg, #0b0e14 0, #0b0e14cc 100%),
+            url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-image-container {
+            position: relative;
+            width: 100%;
+            border-radius: 20px;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 20px;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-image-container::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: radial-gradient(circle at center, rgba(248, 195, 22, 0.4) 0%, rgba(23, 162, 255, 0.2) 30%, transparent 70%);
+            border-radius: 25px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1;
+            filter: blur(20px);
+        }
+
+        .hero-image-container:hover::before {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .hero-image-container:hover .hero-image {
+            transform: scale(1.02);
+            box-shadow: 0 0 60px rgba(248, 195, 22, 0.3), 0 0 100px rgba(23, 162, 255, 0.2), 0 0 150px rgba(248, 195, 22, 0.1);
+        }
+
+        .hero-card {
+            background: rgba(10,12,18,.55);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(6px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.35);
+        }
+
+        .chip {
+            display: inline-flex;
+            gap: .5rem;
+            align-items: center;
+            padding: .35rem .7rem;
+            border-radius: 999px;
+            border: 1px solid #1e2634;
+            background: #0f1219;
+            color: #b7c1d6;
+            font-size: .8rem;
+        }
+
+        .chip i { color: var(--ok) }
+
+        /* PLANES */
+        .section-title {
+            font-weight: 800;
+            letter-spacing: .5px;
+            background: linear-gradient(90deg, #fff, #9ecfff);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .card-glass {
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+        }
+
+        .card-glow {
+            box-shadow: 0 10px 40px rgba(23,162,255,.08);
+        }
+
+        .plan-price {
+            font-weight: 800;
+            font-size: 1.8rem;
+        }
+
+        .badge-accent {
+            background: linear-gradient(90deg, var(--brand), #ffd84c);
+            color: #1a1a1a;
+            font-weight: 800;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: #0d1118;
+            border-top: 3px solid var(--brand);
+        }
+
+        .footer .icons a { color: #e5e9f0 }
+        .footer .icons a:hover { color: var(--brand) }
+
+        /* OFFCANVAS */
+        .offcanvas {
+            background: #0e121a;
+            border-left: 1px solid var(--line);
+        }
+
+        .menu-item {
+            border: 1px solid var(--line);
+            background: #0f131b;
+            color: #dfe7f4;
+        }
+
+        .menu-item:hover { background: #141a25 }
+
+        /* STEPS */
+        .step-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-grid;
+            place-items: center;
+            background: #111826;
+            border: 1px solid #233047;
+        }
+
+        .step-badge.active {
+            background: var(--brand);
+            color: #111;
+            border-color: var(--brand);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .hero-image { height: 300px; }
+        }
+
+        /* Loading states */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container py-2">
+        <a class="brand" href="#">
+            <div class="brand-logo"><i class="fa-solid fa-dumbbell"></i></div>
+            <div class="brand-text">Gym<span class="accent">Manager</span></div>
+        </a>
+
+        <div class="d-none d-lg-flex ms-auto gap-3 align-items-center">
+            <a href="#planes" class="btn btn-ghost px-3">Planes</a>
+            <a href="#entrenamientos" class="btn btn-ghost px-3">Entrenamientos</a>
+            <a href="#contacto" class="btn btn-ghost px-3">Contacto</a>
+
+            <button class="btn btn-client px-3" data-bs-toggle="modal" data-bs-target="#modalCliente">
+                <i class="fa-regular fa-id-card me-2"></i>Cliente
+            </button>
+
+            <button class="btn btn-admin px-3" data-bs-toggle="modal" data-bs-target="#modalAdmin">
+                <i class="fa-solid fa-shield-halved me-2"></i>Administrador
+            </button>
+
+            <button class="btn btn-brand px-4" data-bs-toggle="modal" data-bs-target="#modalWizard">¡Inscríbete ya!</button>
+        </div>
+
+        <button class="navbar-toggler border-0 ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainMenu">
+            <i class="fa-solid fa-bars text-light fs-3"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- OFFCANVAS MENU -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mainMenu">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title">Menú</h5>
+        <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+    <div class="offcanvas-body d-grid gap-2">
+        <a class="btn menu-item" href="#">Inicio</a>
+        <a class="btn menu-item" href="#planes">Planes</a>
+        <a class="btn menu-item" href="#entrenamientos">Entrenamientos</a>
+        <a class="btn menu-item" href="#contacto">Contacto</a>
+
+        <div class="border-top pt-2 mt-2">
+            <button class="btn btn-client w-100 mb-2" data-bs-target="#modalCliente" data-bs-toggle="modal" data-bs-dismiss="offcanvas">
+                <i class="fa-regular fa-id-card me-2"></i> Cliente
+            </button>
+
+            <button class="btn btn-admin w-100" data-bs-target="#modalAdmin" data-bs-toggle="modal" data-bs-dismiss="offcanvas">
+                <i class="fa-solid fa-shield-halved me-2"></i> Administrador
+            </button>
+        </div>
+
+        <div class="border-top pt-2 mt-2">
+            <button class="btn btn-brand w-100" data-bs-target="#modalWizard" data-bs-toggle="modal" data-bs-dismiss="offcanvas">
+                ¡Inscríbete ya!
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- HERO SECTION -->
+<header class="hero">
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <div class="p-4 p-md-5 hero-card">
+                    <div class="chip mb-3"><i class="fa-solid fa-bolt"></i> Black • Gold • Básico</div>
+                    <h1 class="display-5 fw-bold">Potencia tu mejor versión</h1>
+                    <p class="lead mb-4 text-secondary">Inscríbete en 3 pasos, elige tu plan y empieza hoy mismo. Acceso 24/7 en los planes Black y Gold.</p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-brand btn-lg px-4" data-bs-toggle="modal" data-bs-target="#modalWizard">¡Inscríbete ya!</button>
+                        <a href="#planes" class="btn btn-outline-light btn-lg px-4">Ver planes</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="hero-image-container">
+                    <img alt="Atleta entrenando" class="hero-image" src="https://st4.depositphotos.com/3383955/23350/i/450/depositphotos_233503270-stock-photo-sexy-athletic-girl-working-out.jpg">
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- PLANES SECTION -->
+<section id="planes" class="py-5">
+    <div class="container">
+        <h2 class="section-title mb-4">Nuestros Planes</h2>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card card-glass h-100">
+                    <img class="card-img-top" src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=1200&auto=format&fit=crop" alt="Básico">
+                    <div class="card-body">
+                        <span class="badge badge-accent mb-2">Popular</span>
+                        <h5 class="card-title">Básico</h5>
+                        <p class="text-secondary">Acceso en horarios regulares.</p>
+                        <div class="plan-price">$120 <small class="text-secondary">/ mes</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-glass h-100 border-warning">
+                    <img class="card-img-top" src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1200&auto=format&fit=crop" alt="Black">
+                    <div class="card-body">
+                        <span class="badge" style="background:linear-gradient(90deg,#08f,#5df);color:#031224;font-weight:800">Recomendado</span>
+                        <h5 class="card-title">Black</h5>
+                        <p class="text-secondary">Acceso extendido + zonas especiales.</p>
+                        <div class="plan-price">$200 <small class="text-secondary">/ 3 meses</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card card-glass h-100">
+                    <img class="card-img-top" src="https://images.unsplash.com/photo-1558611848-73f7eb4001a1?q=80&w=1200&auto=format&fit=crop" alt="Gold">
+                    <div class="card-body">
+                        <span class="badge badge-accent mb-2">Todo incluido</span>
+                        <h5 class="card-title">Gold</h5>
+                        <p class="text-secondary">Entrenamientos premium + 24/7.</p>
+                        <div class="plan-price">$250 <small class="text-secondary">/ 6 meses</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ENTRENAMIENTOS SECTION -->
+<section id="entrenamientos" class="pb-5">
+    <div class="container">
+        <h2 class="section-title mb-4">Entrenamientos</h2>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card card-glass card-glow h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Clases Funcionales</h5>
+                        <p class="text-secondary">Sesiones guiadas de fuerza, HIIT y movilidad. Cupos limitados, distintos horarios disponibles.</p>
+                        <ul class="text-secondary mb-0">
+                            <li>Crossfit • Lun / Mie / Vie • 7:00</li>
+                            <li>HIIT • Mar / Jue • 18:00</li>
+                        </ul>
+                    </div>
+                    <img class="card-img-bottom" src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=1200&auto=format&fit=crop" alt="Clases funcionales">
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card card-glass h-100 card-glow">
+                    <div class="card-body">
+                        <h5 class="card-title">Área de Pesas y Máquinas</h5>
+                        <p class="text-secondary">Zona equipada con pesas libres, racks olímpicos y máquinas de última generación.</p>
+                        <button class="btn btn-brand" data-bs-toggle="modal" data-bs-target="#modalCliente">Inscribirme a una clase</button>
+                    </div>
+                    <img class="card-img-bottom" src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=1200&auto=format&fit=crop" alt="Área de pesas">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACTO SECTION -->
+<section id="contacto" class="pb-5">
+    <div class="container">
+        <h2 class="section-title mb-3">Contacto</h2>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card card-glass h-100 text-center p-4">
+                    <i class="fa-solid fa-envelope fs-2 mb-2 text-warning"></i>
+                    <h5>Correo</h5>
+                    <p class="text-secondary">contacto@gymmanager.com</p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card card-glass h-100 text-center p-4">
+                    <i class="fa-solid fa-location-dot fs-2 mb-2 text-primary"></i>
+                    <h5>Ubicación</h5>
+                    <p class="text-secondary mb-0">Zona 10, Ciudad de Guatemala</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer py-4">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+        <small class="text-secondary">© 2025 GymManager — Hecho con disciplina</small>
+
+        <div class="icons d-flex gap-3 fs-4">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+</footer>
+
+<!-- MODALES -->
+<!-- Modal Wizard: Inscripción completa -->
+<div class="modal fade" id="modalWizard" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content card-glass">
+            <div class="modal-header">
+                <h5 class="modal-title">Inscripción en 3 pasos</h5>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <div class="step-badge active" id="s1">1</div>
+                    <div class="step-badge" id="s2">2</div>
+                    <div class="step-badge" id="s3">3</div>
+                </div>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="resetWizard()"></button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Paso 1: Datos Personales -->
+                <div id="step-1">
+                    <h6 class="mb-3">Datos Personales</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">DPI *</label>
+                            <input id="c_dpi" class="form-control" type="number" placeholder="1234567890123" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono *</label>
+                            <input id="c_tel" class="form-control" type="text" placeholder="55556666" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre *</label>
+                            <input id="c_nombre" class="form-control" type="text" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Apellido *</label>
+                            <input id="c_apellido" class="form-control" type="text" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Correo Electrónico *</label>
+                            <input id="c_correo" class="form-control" type="email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Nacimiento *</label>
+                            <input id="c_nac" class="form-control" type="date" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paso 2: Membresía -->
+                <div id="step-2" class="d-none">
+                    <h6 class="mb-3">Selecciona tu Membresía</h6>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <select id="m_plan" class="form-select" onchange="actualizarInfoMembresia()">
+                                <option value="">Selecciona un plan</option>
+                                <option value="BASICO">Básico - $120 / 1 mes</option>
+                                <option value="BLACK">Black - $200 / 3 meses</option>
+                                <option value="GOLD">Gold - $250 / 6 meses</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <div id="info-membresia" class="card p-3" style="background: var(--surface); display: none;">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <strong>Plan:</strong>
+                                        <div id="plan-nombre">-</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <strong>Precio:</strong>
+                                        <div id="plan-precio">-</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <strong>Duración:</strong>
+                                        <div id="plan-duracion">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paso 3: Forma de Pago -->
+                <div id="step-3" class="d-none">
+                    <h6 class="mb-3">Información de Pago</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Tarjeta *</label>
+                            <select id="p_tipo" class="form-select" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="DEBITO">Tarjeta Débito</option>
+                                <option value="CREDITO">Tarjeta Crédito</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Número de Tarjeta *</label>
+                            <input id="p_num" class="form-control" maxlength="16" placeholder="1234 5678 9012 3456" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha Vencimiento *</label>
+                            <input id="p_vto" type="month" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">NIT (Opcional)</label>
+                            <input id="p_nit" class="form-control" placeholder="CF o NIT">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button id="btn-prev" class="btn btn-outline-light" onclick="prevStep()" disabled>Volver</button>
+                <div class="d-flex gap-2">
+                    <button id="btn-next" class="btn btn-secondary" onclick="nextStep()">Siguiente</button>
+                    <button id="btn-finish" class="btn btn-brand d-none" onclick="completarInscripcion()">Finalizar Inscripción</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cliente: Login y Panel -->
+<div class="modal fade" id="modalCliente" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content card-glass">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa-regular fa-id-card me-2"></i> Acceso Cliente</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="resetClienteModal()"></button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Login -->
+                <div id="cliente-login">
+                    <p class="text-secondary mb-3">Ingresa tu DPI y teléfono para acceder</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">DPI</label>
+                            <input id="l_dpi" class="form-control" type="number" placeholder="1234567890123">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono</label>
+                            <input id="l_tel" class="form-control" type="text" placeholder="55556666">
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-brand" onclick="clienteLogin()">
+                                <i class="fa-solid fa-right-to-bracket me-2"></i>Ingresar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Cliente -->
+                <div id="cliente-panel" class="d-none">
+                    <ul class="nav nav-tabs mb-3">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-datos">Mis Datos</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-membresia">Mi Membresía</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-entrenar">Inscribirme a Clases</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Datos Personales -->
+                        <div class="tab-pane fade show active" id="tab-datos">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">DPI</label>
+                                    <input id="vd_dpi" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Teléfono</label>
+                                    <input id="vd_tel" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Nombre</label>
+                                    <input id="vd_nombre" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Apellido</label>
+                                    <input id="vd_apellido" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Correo</label>
+                                    <input id="vd_correo" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Fecha Nacimiento</label>
+                                    <input id="vd_nac" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Membresía -->
+                        <div class="tab-pane fade" id="tab-membresia">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Plan</label>
+                                    <input id="vm_plan" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Duración</label>
+                                    <input id="vm_dur" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Precio</label>
+                                    <input id="vm_precio" class="form-control" readonly>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Estado</label>
+                                    <input id="vm_estado" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Entrenamientos -->
+                        <div class="tab-pane fade" id="tab-entrenar">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Nombre de la Clase *</label>
+                                    <select id="e_nombre" class="form-select">
+                                        <option value="">Seleccionar clase...</option>
+                                        <option value="Crossfit">Crossfit</option>
+                                        <option value="HIIT">HIIT</option>
+                                        <option value="Yoga">Yoga</option>
+                                        <option value="Spinning">Spinning</option>
+                                        <option value="Boxeo">Boxeo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Horario *</label>
+                                    <select id="e_horario" class="form-select">
+                                        <option value="">Seleccionar horario...</option>
+                                        <option value="Lun-Mie-Vie 7:00">Lun-Mie-Vie 7:00</option>
+                                        <option value="Mar-Jue 18:00">Mar-Jue 18:00</option>
+                                        <option value="Sab 9:00">Sab 9:00</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Entrenador</label>
+                                    <input id="e_entrenador" class="form-control" placeholder="Opcional">
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn btn-brand" onclick="guardarEntrenamiento()">
+                                        <i class="fa-solid fa-calendar-check me-2"></i>Inscribirme a Clase
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Admin: Panel de Administración -->
+<div class="modal fade" id="modalAdmin" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content card-glass">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa-solid fa-shield-halved me-2"></i> Panel Administrador</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="resetAdminModal()"></button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Login Admin -->
+                <div id="admin-login">
+                    <p class="text-secondary mb-3">Acceso restringido para administradores</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Usuario</label>
+                            <input id="a_user" class="form-control" placeholder="admin">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Contraseña</label>
+                            <input id="a_pass" class="form-control" type="password" placeholder="••••••••">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button class="btn btn-admin w-100" onclick="adminAccess()">
+                                <i class="fa-solid fa-key me-2"></i>Ingresar
+                            </button>
+                        </div>
+                    </div>
+                    <small class="text-secondary">Credenciales: admin / 1234</small>
+                </div>
+
+                <!-- Panel Admin -->
+                <div id="admin-panel" class="d-none">
+                    <ul class="nav nav-tabs mb-3">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-gestion">Gestión</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-pagos">Pagos</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-reportes">Reportes</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Gestión -->
+                        <div class="tab-pane fade show active" id="tab-gestion">
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <div class="card card-glass h-100">
+                                        <div class="card-header bg-dark">
+                                            <i class="fa-solid fa-users me-2"></i>Gestión de Clientes
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row g-2 mb-3">
+                                                <div class="col-12">
+                                                    <input id="ad_id" class="form-control mb-2" placeholder="ID Cliente (para buscar/editar)">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="ad_nombre" class="form-control" placeholder="Nombre">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="ad_apellido" class="form-control" placeholder="Apellido">
+                                                </div>
+                                                <div class="col-12">
+                                                    <input id="ad_correo" class="form-control" placeholder="Correo">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="ad_dpi" class="form-control" placeholder="DPI">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input id="ad_telefono" class="form-control" placeholder="Teléfono">
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-2 flex-wrap">
+                                                <button class="btn btn-success" onclick="adminGuardarCliente()">
+                                                    <i class="fa-solid fa-save me-1"></i>Guardar
+                                                </button>
+                                                <button class="btn btn-warning" onclick="adminLeerCliente()">
+                                                    <i class="fa-solid fa-search me-1"></i>Buscar
+                                                </button>
+                                                <button class="btn btn-danger" onclick="adminEliminarCliente()">
+                                                    <i class="fa-solid fa-trash me-1"></i>Eliminar
+                                                </button>
+                                                <button class="btn btn-info" onclick="limpiarFormularioAdmin()">
+                                                    <i class="fa-solid fa-broom me-1"></i>Limpiar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="card card-glass h-100">
+                                        <div class="card-header bg-dark">
+                                            <i class="fa-solid fa-dumbbell me-2"></i>Gestión de Entrenamientos
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Buscar Entrenamientos por Cliente</label>
+                                                <div class="input-group">
+                                                    <input id="ad_cliente_id" class="form-control" placeholder="ID Cliente">
+                                                    <button class="btn btn-outline-light" onclick="buscarEntrenamientosCliente()">
+                                                        <i class="fa-solid fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-outline-light" onclick="listarTodosEntrenamientos()">
+                                                    <i class="fa-solid fa-list me-1"></i>Listar Todos
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pagos -->
+                        <div class="tab-pane fade" id="tab-pagos">
+                            <div class="card card-glass">
+                                <div class="card-header bg-dark">
+                                    <i class="fa-solid fa-credit-card me-2"></i>Gestión de Pagos
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-3">
+                                            <label class="form-label">ID Pago</label>
+                                            <input id="pago_id" class="form-control" placeholder="Opcional">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">ID Cliente</label>
+                                            <input id="pago_cliente_id" class="form-control" placeholder="Requerido">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Monto</label>
+                                            <input id="pago_monto" class="form-control" type="number" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Estado</label>
+                                            <select id="pago_estado" class="form-select">
+                                                <option value="PENDIENTE">PENDIENTE</option>
+                                                <option value="APROBADO">APROBADO</option>
+                                                <option value="RECHAZADO">RECHAZADO</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Referencia</label>
+                                            <input id="pago_referencia" class="form-control" placeholder="Referencia de pago">
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-success" onclick="crearPago()">
+                                                    <i class="fa-solid fa-plus me-1"></i>Crear Pago
+                                                </button>
+                                                <button class="btn btn-info" onclick="listarPagos()">
+                                                    <i class="fa-solid fa-list me-1"></i>Listar Pagos
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reportes -->
+                        <div class="tab-pane fade" id="tab-reportes">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card card-glass h-100">
+                                        <div class="card-header bg-dark">Reportes</div>
+                                        <div class="card-body d-grid gap-2">
+                                            <button class="btn btn-outline-light" onclick="generarReporte('ingresos-por-membresia')">
+                                                <i class="fa-solid fa-chart-line me-2"></i>Ingresos por Membresía
+                                            </button>
+                                            <button class="btn btn-outline-light" onclick="generarReporte('clientes-activos')">
+                                                <i class="fa-solid fa-users me-2"></i>Clientes Activos
+                                            </button>
+                                            <button class="btn btn-outline-light" onclick="generarReporte('pagos-pendientes')">
+                                                <i class="fa-solid fa-clock me-2"></i>Pagos Pendientes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="card card-glass h-100">
+                                        <div class="card-header bg-dark">Datos del Sistema</div>
+                                        <div class="card-body">
+                                            <div id="admin-stats" class="text-center">
+                                                <p class="text-secondary">Los datos del sistema aparecerán aquí</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de resultados -->
+                    <div class="card card-glass mt-3">
+                        <div class="card-header bg-dark">
+                            <i class="fa-solid fa-table me-2"></i>Resultados
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped m-0" id="tabla-data">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Campo</th>
+                                        <th>Valor</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts JavaScript -->
+<script>
+    const API = 'http://localhost:8080/api/v1';
+    let clienteActual = null;
+    let pasoWizard = 1;
+
+    // ========== WIZARD DE INSCRIPCIÓN ==========
+    function nextStep() {
+        if (pasoWizard < 3) {
+            // Validar paso actual antes de avanzar
+            if (pasoWizard === 1 && !validarPaso1()) return;
+            if (pasoWizard === 2 && !validarPaso2()) return;
+
+            document.getElementById(`step-${pasoWizard}`).classList.add('d-none');
+            document.getElementById(`s${pasoWizard}`).classList.remove('active');
+            pasoWizard++;
+            document.getElementById(`step-${pasoWizard}`).classList.remove('d-none');
+            document.getElementById(`s${pasoWizard}`).classList.add('active');
+            actualizarBotonesWizard();
+        }
+    }
+
+    function prevStep() {
+        if (pasoWizard > 1) {
+            document.getElementById(`step-${pasoWizard}`).classList.add('d-none');
+            document.getElementById(`s${pasoWizard}`).classList.remove('active');
+            pasoWizard--;
+            document.getElementById(`step-${pasoWizard}`).classList.remove('d-none');
+            document.getElementById(`s${pasoWizard}`).classList.add('active');
+            actualizarBotonesWizard();
+        }
+    }
+
+    function actualizarBotonesWizard() {
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnFinish = document.getElementById('btn-finish');
+
+        btnPrev.disabled = pasoWizard === 1;
+        btnNext.classList.toggle('d-none', pasoWizard === 3);
+        btnFinish.classList.toggle('d-none', pasoWizard !== 3);
+    }
+
+    function validarPaso1() {
+        const campos = ['c_dpi', 'c_tel', 'c_nombre', 'c_apellido', 'c_correo', 'c_nac'];
+        for (let campo of campos) {
+            if (!document.getElementById(campo).value) {
+                alert('Por favor complete todos los campos obligatorios');
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function validarPaso2() {
+        if (!document.getElementById('m_plan').value) {
+            alert('Por favor seleccione un plan de membresía');
+            return false;
+        }
+        return true;
+    }
+
+    function actualizarInfoMembresia() {
+        const plan = document.getElementById('m_plan').value;
+        const infoDiv = document.getElementById('info-membresia');
+
+        if (plan) {
+            const planes = {
+                'BASICO': { precio: '$120', duracion: '1 mes' },
+                'BLACK': { precio: '$200', duracion: '3 meses' },
+                'GOLD': { precio: '$250', duracion: '6 meses' }
+            };
+
+            document.getElementById('plan-nombre').textContent = plan;
+            document.getElementById('plan-precio').textContent = planes[plan].precio;
+            document.getElementById('plan-duracion').textContent = planes[plan].duracion;
+            infoDiv.style.display = 'block';
+        } else {
+            infoDiv.style.display = 'none';
+        }
+    }
+
+    async function completarInscripcion() {
+        const btn = document.getElementById('btn-finish');
+        const originalText = btn.innerHTML;
+
+        try {
+            // Validar paso 3
+            if (!document.getElementById('p_tipo').value || !document.getElementById('p_num').value || !document.getElementById('p_vto').value) {
+                alert('Por favor complete todos los campos de pago');
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Procesando...';
+            btn.disabled = true;
+
+            // 1️⃣ Crear cliente
+            const clienteData = {
+                dpi: parseInt(document.getElementById('c_dpi').value),
+                nombreCliente: document.getElementById('c_nombre').value,
+                apellidoCliente: document.getElementById('c_apellido').value,
+                correoCliente: document.getElementById('c_correo').value,
+                telefonoCliente: document.getElementById('c_tel').value,
+                fechaNacimientoCliente: document.getElementById('c_nac').value,
+                estadoDeMembresia: true
+            };
+
+            const responseCliente = await fetch(`${API}/clientes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(clienteData)
+            });
+
+            if (!responseCliente.ok) {
+                throw new Error('Error al crear cliente: ' + await responseCliente.text());
+            }
+
+            const cliente = await responseCliente.json();
+
+            // 2️⃣ Crear membresía
+            const membresiaData = {
+                nombrePlan: document.getElementById('m_plan').value
+            };
+
+            const responseMembresia = await fetch(`${API}/membresias`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(membresiaData)
+            });
+
+            if (!responseMembresia.ok) {
+                throw new Error('Error al crear membresía: ' + await responseMembresia.text());
+            }
+
+            const membresia = await responseMembresia.json();
+
+            // 3️⃣ Crear forma de pago (👈 corregido para incluir cliente correctamente)
+            const formaPagoData = {
+                tipoTarjeta: document.getElementById('p_tipo').value,
+                numeroTarjeta: document.getElementById('p_num').value,
+                vencimiento: document.getElementById('p_vto').value + '-01',
+                nit: document.getElementById('p_nit').value || null,
+                cliente: { clienteId: cliente.clienteId || cliente.id } // ✅ ESTE ES EL CAMBIO CLAVE
+            };
+
+            const responseFormaPago = await fetch(`${API}/formas-de-pago`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formaPagoData)
+            });
+
+            if (!responseFormaPago.ok) {
+                throw new Error('Error al crear forma de pago: ' + await responseFormaPago.text());
+            }
+
+            const formaPago = await responseFormaPago.json();
+
+            // 4️⃣ Crear pago final
+            const pagoData = {
+                fechaPago: new Date().toISOString().split('T')[0],
+                monto: obtenerMontoPlan(document.getElementById('m_plan').value),
+                referencia: `WEB-${Date.now()}`,
+                estado: 'APROBADO',
+                clienteId: cliente.clienteId || cliente.id,
+                membresiaId: membresia.membresiaId || membresia.id,
+                formaPagoId: formaPago.formaPagoId || formaPago.id
+            };
+
+            const responsePago = await fetch(`${API}/pagos`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(pagoData)
+            });
+
+            if (!responsePago.ok) {
+                throw new Error('Error al crear pago: ' + await responsePago.text());
+            }
+
+            alert('🎉 ¡Inscripción completada exitosamente!');
+            resetWizard();
+            document.querySelector('#modalWizard .btn-close').click();
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    function obtenerMontoPlan(plan) {
+        const montos = {
+            'BASICO': 120,
+            'BLACK': 200,
+            'GOLD': 250
+        };
+        return montos[plan] || 0;
+    }
+
+    function resetWizard() {
+        pasoWizard = 1;
+        document.getElementById('step-1').classList.remove('d-none');
+        document.getElementById('step-2').classList.add('d-none');
+        document.getElementById('step-3').classList.add('d-none');
+        document.getElementById('s1').classList.add('active');
+        document.getElementById('s2').classList.remove('active');
+        document.getElementById('s3').classList.remove('active');
+        actualizarBotonesWizard();
+
+        // Limpiar formularios
+        document.querySelectorAll('#modalWizard input, #modalWizard select').forEach(input => {
+            input.value = '';
+        });
+        document.getElementById('info-membresia').style.display = 'none';
+    }
+
+    // ========== MÓDULO CLIENTE ==========
+    async function clienteLogin() {
+        const dpi = document.getElementById('l_dpi').value;
+        const telefono = document.getElementById('l_tel').value;
+
+        if (!dpi || !telefono) {
+            alert('Por favor ingrese DPI y teléfono');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API}/clientes/login?dpi=${dpi}&telefono=${telefono}`);
+            if (!response.ok) {
+                throw new Error('Cliente no encontrado');
+            }
+
+            clienteActual = await response.json();
+            mostrarPanelCliente(clienteActual);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    function mostrarPanelCliente(cliente) {
+        // Llenar datos personales
+        document.getElementById('vd_dpi').value = cliente.dpi || '';
+        document.getElementById('vd_tel').value = cliente.telefonoCliente || '';
+        document.getElementById('vd_nombre').value = cliente.nombreCliente || '';
+        document.getElementById('vd_apellido').value = cliente.apellidoCliente || '';
+        document.getElementById('vd_correo').value = cliente.correoCliente || '';
+        document.getElementById('vd_nac').value = cliente.fechaNacimientoCliente || '';
+
+        // Llenar datos de membresía si existen
+        if (cliente.membresia) {
+            document.getElementById('vm_plan').value = cliente.membresia.nombrePlan || '';
+            document.getElementById('vm_dur').value = cliente.membresia.duracionDeMesesPlan + ' meses' || '';
+            document.getElementById('vm_precio').value = '$' + (cliente.membresia.precioPlan || '');
+            document.getElementById('vm_estado').value = cliente.estadoDeMembresia ? 'ACTIVA' : 'INACTIVA';
+        }
+
+        document.getElementById('cliente-login').classList.add('d-none');
+        document.getElementById('cliente-panel').classList.remove('d-none');
+    }
+
+    async function guardarEntrenamiento() {
+        if (!clienteActual) {
+            alert('Por favor inicie sesión primero');
+            return;
+        }
+
+        const nombre = document.getElementById('e_nombre').value;
+        const horario = document.getElementById('e_horario').value;
+        const entrenador = document.getElementById('e_entrenador').value;
+
+        if (!nombre || !horario) {
+            alert('Por favor complete los campos obligatorios');
+            return;
+        }
+
+        try {
+            const entrenamientoData = {
+                nombreClase: nombre,
+                horario: horario,
+                entrenador: entrenador || 'Por asignar',
+                cliente: { clienteId: clienteActual.clienteId || clienteActual.id }
+            };
+
+            const response = await fetch(`${API}/entrenamientos`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entrenamientoData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al registrar entrenamiento');
+            }
+
+            alert('¡Inscripción a clase registrada exitosamente!');
+            document.getElementById('e_nombre').value = '';
+            document.getElementById('e_horario').value = '';
+            document.getElementById('e_entrenador').value = '';
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    function resetClienteModal() {
+        document.getElementById('cliente-login').classList.remove('d-none');
+        document.getElementById('cliente-panel').classList.add('d-none');
+        document.getElementById('l_dpi').value = '';
+        document.getElementById('l_tel').value = '';
+        clienteActual = null;
+    }
+
+    // ========== MÓDULO ADMINISTRADOR ==========
+    function adminAccess() {
+        const usuario = document.getElementById('a_user').value;
+        const password = document.getElementById('a_pass').value;
+
+        if (usuario === 'admin' && password === '1234') {
+            document.getElementById('admin-login').classList.add('d-none');
+            document.getElementById('admin-panel').classList.remove('d-none');
+            cargarEstadisticasAdmin();
+        } else {
+            alert('Usuario o contraseña incorrectos');
+        }
+    }
+
+    async function cargarEstadisticasAdmin() {
+        try {
+            const [clientesRes, pagosRes] = await Promise.all([
+                fetch(`${API}/clientes`),
+                fetch(`${API}/pagos`)
+            ]);
+
+            const clientes = clientesRes.ok ? await clientesRes.json() : [];
+            const pagos = pagosRes.ok ? await pagosRes.json() : [];
+
+            const statsHtml = `
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h4>${clientes.length}</h4>
+                            <small>Clientes</small>
+                        </div>
+                        <div class="col-4">
+                            <h4>${pagos.length}</h4>
+                            <small>Pagos</small>
+                        </div>
+                        <div class="col-4">
+                            <h4>$${pagos.reduce((sum, p) => sum + (p.monto || 0), 0)}</h4>
+                            <small>Ingresos</small>
+                        </div>
+                    </div>
+                `;
+
+            document.getElementById('admin-stats').innerHTML = statsHtml;
+        } catch (error) {
+            console.error('Error cargando estadísticas:', error);
+        }
+    }
+
+    async function adminGuardarCliente() {
+        const id = document.getElementById('ad_id').value;
+        const clienteData = {
+            nombreCliente: document.getElementById('ad_nombre').value,
+            apellidoCliente: document.getElementById('ad_apellido').value,
+            correoCliente: document.getElementById('ad_correo').value,
+            dpi: document.getElementById('ad_dpi').value,
+            telefonoCliente: document.getElementById('ad_telefono').value
+        };
+
+        const url = id ? `${API}/clientes/${id}` : `${API}/clientes`;
+        const method = id ? 'PUT' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(clienteData)
+            });
+
+            const data = await response.json();
+            renderTabla([data]);
+            limpiarFormularioAdmin();
+            alert(id ? 'Cliente actualizado' : 'Cliente creado');
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    async function adminLeerCliente() {
+        const id = document.getElementById('ad_id').value;
+        if (!id) {
+            alert('Ingrese un ID de cliente');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API}/clientes/${id}`);
+            if (!response.ok) throw new Error('Cliente no encontrado');
+
+            const data = await response.json();
+            renderTabla([data]);
+
+            // Llenar formulario con datos del cliente
+            document.getElementById('ad_nombre').value = data.nombreCliente || '';
+            document.getElementById('ad_apellido').value = data.apellidoCliente || '';
+            document.getElementById('ad_correo').value = data.correoCliente || '';
+            document.getElementById('ad_dpi').value = data.dpi || '';
+            document.getElementById('ad_telefono').value = data.telefonoCliente || '';
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    async function adminEliminarCliente() {
+        const id = document.getElementById('ad_id').value;
+        if (!id) {
+            alert('Ingrese un ID de cliente');
+            return;
+        }
+
+        if (!confirm('¿Está seguro de eliminar este cliente?')) return;
+
+        try {
+            const response = await fetch(`${API}/clientes/${id}`, { method: 'DELETE' });
+            renderTabla({ resultado: response.ok ? 'Eliminado' : 'Error' });
+            limpiarFormularioAdmin();
+            alert('Cliente eliminado');
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    async function crearPago() {
+        const pagoData = {
+            clienteId: parseInt(document.getElementById('pago_cliente_id').value),
+            monto: parseFloat(document.getElementById('pago_monto').value),
+            estado: document.getElementById('pago_estado').value,
+            referencia: document.getElementById('pago_referencia').value,
+            fechaPago: new Date().toISOString().split('T')[0]
+        };
+
+        try {
+            const response = await fetch(`${API}/pagos`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(pagoData)
+            });
+
+            const data = await response.json();
+            renderTabla([data]);
+            alert('Pago creado exitosamente');
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    async function listarPagos() {
+        try {
+            const response = await fetch(`${API}/pagos`);
+            const data = await response.json();
+            renderTabla(data);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    async function generarReporte(tipo) {
+        try {
+            const response = await fetch(`${API}/reportes/${tipo}`);
+            const data = await response.json();
+            renderTabla(data);
+            alert(`Reporte de ${tipo} generado`);
+        } catch (error) {
+            alert('Error generando reporte: ' + error.message);
+        }
+    }
+
+    function renderTabla(data) {
+        const tbody = document.querySelector('#tabla-data tbody');
+        tbody.innerHTML = '';
+
+        if (Array.isArray(data)) {
+            data.forEach((item, index) => {
+                Object.entries(item).forEach(([key, value]) => {
+                    const row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${key}</td>
+                                <td>${typeof value === 'object' ? JSON.stringify(value) : value}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="editarItem(${item.id || item.clienteId})">
+                                        <i class="fa-solid fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    tbody.innerHTML += row;
+                });
+            });
+        } else {
+            Object.entries(data).forEach(([key, value]) => {
+                const row = `
+                        <tr>
+                            <td>-</td>
+                            <td>${key}</td>
+                            <td>${typeof value === 'object' ? JSON.stringify(value) : value}</td>
+                            <td></td>
+                        </tr>
+                    `;
+                tbody.innerHTML += row;
+            });
+        }
+    }
+
+    function limpiarFormularioAdmin() {
+        document.querySelectorAll('#admin-panel input').forEach(input => {
+            if (input.id !== 'a_user' && input.id !== 'a_pass') {
+                input.value = '';
+            }
+        });
+    }
+
+    function resetAdminModal() {
+        document.getElementById('admin-login').classList.remove('d-none');
+        document.getElementById('admin-panel').classList.add('d-none');
+        document.getElementById('a_user').value = '';
+        document.getElementById('a_pass').value = '';
+        document.querySelector('#tabla-data tbody').innerHTML = '';
+    }
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+        actualizarBotonesWizard();
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
