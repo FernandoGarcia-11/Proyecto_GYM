@@ -27,19 +27,6 @@ Sistema completo para la gestión de gimnasios desarrollado con Spring Boot y Ma
 Video de Muestra: https://drive.google.com/drive/folders/16gszMtVr13--bWZjFKC3G-w5hMfPq2dJ?usp=sharing
  Muestra completa del sistema en funcionamiento
 
-**El video incluye:**
-- ✅ Gestión de clientes
-- ✅ Registro de membresías
-- ✅ Control de entrenamientos
-- ✅ Sistema de pagos
-- ✅ Generación de reportes
-
-### Capturas de Pantalla
-
-_(Opcional: Agrega capturas aquí)_
-
----
-
 ## ✨ Características
 
 - **Gestión de Clientes**: Registro, actualización y consulta de clientes
@@ -144,7 +131,7 @@ mvnw.cmd clean install
 # Base de Datos
 spring.datasource.url=jdbc:mariadb://localhost:3307/gym_manager
 spring.datasource.username=root
-spring.datasource.password=123
+spring.datasource.password=123456
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 # JPA/Hibernate
